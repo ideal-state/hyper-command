@@ -74,11 +74,20 @@ public class CommandImpl implements Command {
         AssertUtils.notNull(context, "无效的命令上下文");
         AssertUtils.notNull(action, "无效的命令动作");
         args = Command.promise(args);
-        if (args.length > command.getDepth()) {
+        boolean result = false;
+        int depth = command.getDepth();
+        if (args.length > depth) {
             ActionInterceptor actionInterceptor = command.getActionInterceptor();
-            return actionInterceptor != null && actionInterceptor.intercept(context, action);
+            result = actionInterceptor != null && actionInterceptor.intercept(context, action);
         }
-        return false;
+        if (result) {
+            logger.trace("[Command]({}) 拦截操作：{}，参数长度：{}，命令深度：{}",
+                    command.getDescription(), args[depth], args.length, depth);
+        } else {
+            logger.trace("[Command]({}) 放行操作：{}，参数长度：{}，命令深度：{}",
+                    command.getDescription(), args[depth], args.length, depth);
+        }
+        return result;
     }
 
     @Override
@@ -208,10 +217,12 @@ public class CommandImpl implements Command {
             context.setDepth(depth);
             boolean result = argumentAcceptor != null && argumentAcceptor.acceptArgument(context);
             if (result) {
-                logger.debug("[Command]({}) 参数命中：{}，参数长度：{}，命令深度：{}",
+                logger.trace("[Command]({}) 参数命中：{}，参数长度：{}，命令深度：{}",
                         getDescription(), args[depth], args.length, depth);
                 return true;
             }
+            logger.trace("[Command]({}) 参数无效：{}，参数长度：{}，命令深度：{}",
+                    getDescription(), args[depth], args.length, depth);
         }
         return false;
     }
@@ -243,7 +254,6 @@ public class CommandImpl implements Command {
             List<String> examples = null;
             context.setArguments(args);
             context.setDepth(depth);
-            logger.debug("[Command]({}) 补全参数", getDescription());
             for (Command subCommand : subCommands) {
                 ExampleProvider exampleProvider = subCommand.getExampleProvider();
                 if (exampleProvider == null) {
@@ -268,6 +278,7 @@ public class CommandImpl implements Command {
                 examples.addAll(completer.complete(context, subExamples));
             }
             if (examples != null) {
+                logger.trace("[Command]({}) 补全命令：{} 项", getDescription(), examples.size());
                 result = CompleterUtils.defaultCompleter().complete(context, examples);
             }
         }
@@ -285,7 +296,7 @@ public class CommandImpl implements Command {
                 context.setArguments(args);
                 context.setDepth(depth);
                 if (!intercept(this, context, CommandAction.EXECUTE, args)) {
-                    logger.debug("[Command]({}) 执行命令", getDescription());
+                    logger.trace("[Command]({}) 执行命令", getDescription());
                     return executor.execute(context);
                 }
             }

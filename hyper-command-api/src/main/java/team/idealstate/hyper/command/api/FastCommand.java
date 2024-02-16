@@ -79,39 +79,47 @@ public abstract class FastCommand {
     @Nullable
     public static List<String> complete(@NotNull Command command, String[] args) {
         AssertUtils.notNull(command, "无效的命令");
-        args = Command.promise(args);
-        CommandContext currentContext = currentContext();
-        currentContext.reset();
-        for (int i = 0; i < args.length; i++) {
-            Command acceptedCommand = command.accept(currentContext, args);
-            if (acceptedCommand == null) {
-                break;
+        CommandContext currentContext = null;
+        try {
+            args = Command.promise(args);
+            currentContext = currentContext();
+            for (int i = 0; i < args.length; i++) {
+                Command acceptedCommand = command.accept(currentContext, args);
+                if (acceptedCommand == null) {
+                    break;
+                }
+                command = acceptedCommand;
             }
-            command = acceptedCommand;
+            return command.complete(currentContext, args);
+        } finally {
+            if (currentContext != null) {
+                currentContext.reset();
+            }
         }
-        List<String> completed = command.complete(currentContext, args);
-        currentContext.reset();
-        return completed;
     }
 
     @Nullable
     public static Boolean execute(@NotNull Command command, String[] args) {
         AssertUtils.notNull(command, "无效的命令");
-        args = Command.promise(args);
-        CommandContext currentContext = currentContext();
-        currentContext.reset();
-        for (int i = 0; i < args.length; i++) {
-            command = command.accept(currentContext, args);
-            if (command == null) {
-                break;
+        CommandContext currentContext = null;
+        try {
+            args = Command.promise(args);
+            currentContext = currentContext();
+            for (int i = 0; i < args.length; i++) {
+                command = command.accept(currentContext, args);
+                if (command == null) {
+                    break;
+                }
+            }
+            Boolean executed = null;
+            if (command != null) {
+                executed = command.execute(currentContext, args);
+            }
+            return executed;
+        } finally {
+            if (currentContext != null) {
+                currentContext.reset();
             }
         }
-        if (command == null) {
-            currentContext.reset();
-            return null;
-        }
-        Boolean executed = command.execute(currentContext, args);
-        currentContext.reset();
-        return executed;
     }
 }
