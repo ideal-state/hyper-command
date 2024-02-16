@@ -36,7 +36,6 @@ subprojects {
             mavenCentral()
         }
 
-        ext["projectName"] = "${rootProject.name}-${project.name}"
         ext["authors"] = authors
         ext["javaVersion"] = javaVersion
         ext["charset"] = charset

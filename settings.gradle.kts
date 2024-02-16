@@ -1,14 +1,14 @@
 rootProject.name = "hyper-command"
 
-include(":api")
-include(":impl")
+include(":hyper-command-api")
+include(":hyper-command-impl")
 
 pluginManagement {
     repositories {
         mavenLocal()
         maven {
             name = "aliyun-public"
-            url = uri("https://maven.aliyun.com/repository/public")
+            url = uri("https://maven.aliyun.com/repository/public/")
         }
         maven {
             name = "sonatype-releases"
@@ -24,7 +24,7 @@ buildscript {
         mavenLocal()
         maven {
             name = "aliyun-public"
-            url = uri("https://maven.aliyun.com/repository/public")
+            url = uri("https://maven.aliyun.com/repository/public/")
         }
         maven {
             name = "sonatype-releases"

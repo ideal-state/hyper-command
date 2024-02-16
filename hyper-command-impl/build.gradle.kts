@@ -7,7 +7,6 @@ plugins {
     id("signing")
 }
 
-val projectName = project.ext["projectName"] as String
 val authors = project.ext["authors"] as String
 val javaVersion = project.ext["javaVersion"] as Int
 val charset = project.ext["charset"] as String
@@ -15,12 +14,14 @@ val charset = project.ext["charset"] as String
 dependencies {
     compileOnly("org.jetbrains:annotations:24.0.1")
 
-    api("team.idealstate.hyper:hyper-commons-base:1.0.0")
+    api(project(":hyper-command-api"))
+    implementation("org.apache.logging.log4j:log4j-core:2.22.1")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     testCompileOnly("org.jetbrains:annotations:24.0.0")
+    testImplementation(project(":hyper-command-api"))
 }
 
 tasks.test {
@@ -44,7 +45,7 @@ tasks.compileJava {
 tasks.processResources {
     filteringCharset = charset
     includeEmptyDirs = false
-    val assetsDir = "assets/${projectName}"
+    val assetsDir = "assets/${project.name}"
     eachFile {
         if (path.startsWith("assets/")) {
             print("$path >> ")
@@ -56,7 +57,7 @@ tasks.processResources {
 
 val manifestAttributes: MutableMap<String, *> = linkedMapOf(
         "Group" to project.group,
-        "Name" to projectName,
+        "Name" to project.name,
         "Version" to project.version,
         "Authors" to authors,
         "Updated" to DateFormatUtils.format(Date(), "yyyy-MM-dd HH:mm:ssZ"),
@@ -64,7 +65,7 @@ val manifestAttributes: MutableMap<String, *> = linkedMapOf(
 )
 
 tasks.register<Jar>("sourcesJar") {
-    archiveBaseName.set(projectName)
+    archiveBaseName.set(project.name)
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
     manifest {
@@ -80,7 +81,7 @@ tasks.javadoc {
         encoding(charset)
         docEncoding(charset)
         locale("zh_CN")
-        windowTitle("${projectName}-${project.version} API")
+        windowTitle("${project.name}-${project.version} API")
         docTitle(windowTitle)
         author(true)
         version(true)
@@ -90,7 +91,7 @@ tasks.javadoc {
 
 tasks.register<Jar>("javadocJar") {
     dependsOn(tasks.javadoc)
-    archiveBaseName.set(projectName)
+    archiveBaseName.set(project.name)
     archiveClassifier.set("javadoc")
     from(tasks.javadoc)
     manifest {
@@ -101,7 +102,7 @@ val javadocJar = tasks.named<Jar>("javadocJar")
 
 tasks.jar {
     dependsOn(sourcesJar, javadocJar)
-    archiveBaseName.set(projectName)
+    archiveBaseName.set(project.name)
     archiveClassifier.set("")
     manifest {
         attributes(manifestAttributes)
@@ -119,11 +120,11 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = project.group.toString()
-            artifactId = projectName
+            artifactId = project.name
             version = project.version.toString()
 
             pom {
-                name.set(projectName)
+                name.set(project.name)
                 description.set("一个简单快速的命令系统")
                 packaging = "jar"
                 url.set("https://github.com/ideal-state/hyper-command")
