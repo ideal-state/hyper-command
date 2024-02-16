@@ -52,13 +52,13 @@ cd ./hyper-command
 ```
 
 ```shell
-./gradlew.bat :clean :base:jar
+./gradlew.bat :clean :hyper-command-api:jar :hyper-command-impl:jar
 ```
 
 或
 
 ```shell
-./gradlew :clean :base:jar
+./gradlew :clean :hyper-command-api:jar :hyper-command-impl:jar
 ```
 
 > 等待构建完成，在 ./build/libs 下会生成 .jar 工件
