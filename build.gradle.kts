@@ -30,8 +30,8 @@ subprojects {
                 url = uri("https://maven.aliyun.com/repository/public/")
             }
             maven {
-                name = "sonatype-releases"
-                url = uri("https://oss.sonatype.org/content/repositories/releases/")
+                name = "sonatype-public"
+                url = uri("https://oss.sonatype.org/content/groups/public/")
             }
             mavenCentral()
         }

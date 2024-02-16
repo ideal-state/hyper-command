@@ -65,7 +65,6 @@ val manifestAttributes: MutableMap<String, *> = linkedMapOf(
 )
 
 tasks.register<Jar>("sourcesJar") {
-    archiveBaseName.set(project.name)
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
     manifest {
@@ -91,7 +90,6 @@ tasks.javadoc {
 
 tasks.register<Jar>("javadocJar") {
     dependsOn(tasks.javadoc)
-    archiveBaseName.set(project.name)
     archiveClassifier.set("javadoc")
     from(tasks.javadoc)
     manifest {
@@ -102,7 +100,6 @@ val javadocJar = tasks.named<Jar>("javadocJar")
 
 tasks.jar {
     dependsOn(sourcesJar, javadocJar)
-    archiveBaseName.set(project.name)
     archiveClassifier.set("")
     manifest {
         attributes(manifestAttributes)
