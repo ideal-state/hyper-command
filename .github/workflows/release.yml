@@ -70,7 +70,7 @@ jobs:
 
       - name: Gradle Jar
         if: steps.check_release.outputs.result == '404'
-        run: ./gradlew :clean :api:jar :impl:jar
+        run: ./gradlew :clean :hyper-command-api:jar :hyper-command-impl:jar
 
       - name: Create a release
         if: steps.check_release.outputs.result == '404'
