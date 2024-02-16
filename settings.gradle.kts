@@ -7,8 +7,8 @@ pluginManagement {
     repositories {
         mavenLocal()
         maven {
-            name = "aliyun-public"
-            url = uri("https://maven.aliyun.com/repository/public/")
+            name = "aliyun-central"
+            url = uri("https://maven.aliyun.com/repository/central/")
         }
         maven {
             name = "sonatype-public"
@@ -23,8 +23,8 @@ buildscript {
     repositories {
         mavenLocal()
         maven {
-            name = "aliyun-public"
-            url = uri("https://maven.aliyun.com/repository/public/")
+            name = "aliyun-central"
+            url = uri("https://maven.aliyun.com/repository/central/")
         }
         maven {
             name = "sonatype-public"
