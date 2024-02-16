@@ -1,3 +1,4 @@
+import groovy.util.Node
 import org.apache.commons.lang3.time.DateFormatUtils
 import java.util.*
 
@@ -12,16 +13,16 @@ val javaVersion = project.ext["javaVersion"] as Int
 val charset = project.ext["charset"] as String
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:24.0.0")
-    compileOnly(fileTree("${projectDir}/libraries"))
+    compileOnly("org.jetbrains:annotations:24.0.1")
 
     api(project(":api"))
     implementation("org.apache.logging.log4j:log4j-core:2.22.1")
 
-    testCompileOnly("org.jetbrains:annotations:24.0.0")
-    testImplementation(project(":api"))
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
+    testCompileOnly("org.jetbrains:annotations:24.0.0")
+    testImplementation(project(":api"))
 }
 
 tasks.test {
@@ -125,7 +126,7 @@ publishing {
 
             pom {
                 name.set(projectName)
-                description.set("提供一些基础的公共工具类")
+                description.set("一个简单快速的命令系统")
                 packaging = "jar"
                 url.set("https://github.com/ideal-state/hyper-command")
                 inceptionYear.set("2024")
@@ -155,6 +156,36 @@ publishing {
                     tag.set(version)
                     connection.set("scm:git:git@github.com:ideal-state/hyper-command.git")
                     developerConnection.set("scm:git:git@github.com:ideal-state/hyper-command.git")
+                }
+
+                withXml {
+                    var dependenciesNode: Node? = null
+                    val compileDependencyIds = mutableSetOf<String>()
+                    configurations.compileClasspath.get()
+                            .resolvedConfiguration.firstLevelModuleDependencies.forEach { dependency ->
+                                if (dependenciesNode == null) {
+                                    dependenciesNode = asNode().appendNode("dependencies")
+                                }
+                                val dependencyNode = dependenciesNode!!.appendNode("dependency")
+                                dependencyNode.appendNode("groupId", dependency.moduleGroup)
+                                dependencyNode.appendNode("artifactId", dependency.moduleName)
+                                dependencyNode.appendNode("version", dependency.moduleVersion)
+                                dependencyNode.appendNode("scope", "compile")
+                                compileDependencyIds.add("${dependency.moduleGroup}:${dependency.moduleName}:${dependency.moduleVersion}")
+                            }
+                    configurations.runtimeClasspath.get()
+                            .resolvedConfiguration.firstLevelModuleDependencies.forEach { dependency ->
+                                if (!compileDependencyIds.contains("${dependency.moduleGroup}:${dependency.moduleName}:${dependency.moduleVersion}")) {
+                                    if (dependenciesNode == null) {
+                                        dependenciesNode = asNode().appendNode("dependencies")
+                                    }
+                                    val dependencyNode = dependenciesNode!!.appendNode("dependency")
+                                    dependencyNode.appendNode("groupId", dependency.moduleGroup)
+                                    dependencyNode.appendNode("artifactId", dependency.moduleName)
+                                    dependencyNode.appendNode("version", dependency.moduleVersion)
+                                    dependencyNode.appendNode("scope", "runtime")
+                                }
+                            }
                 }
             }
 
