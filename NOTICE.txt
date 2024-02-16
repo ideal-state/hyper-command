@@ -25,7 +25,8 @@ logging-log4j2:
 
 ========================================================================
 
-hyper-commons
+hyper-commons:
+    hyper-commons-base
 (https://github.com/ideal-state/hyper-commons)
 
 ************************************************************************
