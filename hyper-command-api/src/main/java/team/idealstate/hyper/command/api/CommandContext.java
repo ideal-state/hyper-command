@@ -33,7 +33,7 @@ import java.util.Set;
 public interface CommandContext {
 
     @Nullable
-    Object put(@NotNull String key, @NotNull Object value);
+    Object put(@NotNull String key, @Nullable Object value);
 
     @Nullable
     Object remove(@NotNull String key);

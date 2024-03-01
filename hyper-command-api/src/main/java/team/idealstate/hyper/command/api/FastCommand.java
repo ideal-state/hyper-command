@@ -18,6 +18,7 @@ package team.idealstate.hyper.command.api;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import team.idealstate.hyper.command.api.framework.CommandHandler;
 import team.idealstate.hyper.command.spi.CommandContextFactory;
 import team.idealstate.hyper.command.spi.CommandFactory;
 import team.idealstate.hyper.commons.base.AssertUtils;
@@ -74,6 +75,11 @@ public abstract class FastCommand {
     @NotNull
     public static Command command(String description) {
         return COMMAND_FACTORY.createCommand(description);
+    }
+
+    @NotNull
+    public static Command command(@NotNull Class<? extends CommandHandler> commandHandlerClass) {
+        return COMMAND_FACTORY.createCommand(commandHandlerClass);
     }
 
     @Nullable

@@ -44,9 +44,8 @@ public class CommandContextImpl implements CommandContext {
     private int depth = -1;
 
     @Override
-    public @Nullable Object put(@NotNull String key, @NotNull Object value) {
+    public @Nullable Object put(@NotNull String key, @Nullable Object value) {
         AssertUtils.notBlank(key, "无效的键");
-        AssertUtils.notNull(value, "无效的值");
         return valueMap.put(key, value);
     }
 

@@ -14,29 +14,24 @@
  * limitations under the License.
  */
 
-package team.idealstate.hyper.command.spi;
+package team.idealstate.hyper.command.api.framework;
 
 import org.jetbrains.annotations.NotNull;
-import team.idealstate.hyper.command.api.Command;
-import team.idealstate.hyper.command.api.framework.CommandHandler;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * <p>CommandFactory</p>
+ * <p>CommandHandler</p>
  *
- * <p>创建于 2024/2/16 20:19</p>
+ * <p>创建于 2024/2/29 15:13</p>
  *
  * @author ketikai
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface CommandFactory {
+public interface CommandHandler {
 
-    @NotNull
-    Command createRootCommand(String description);
-
-    @NotNull
-    Command createCommand(String description);
-
-    @NotNull
-    Command createCommand(@NotNull Class<? extends CommandHandler> commandHandlerClass);
+    @Nullable
+    default <R> ArgumentConvertor<R> findArgumentConvertor(@NotNull Class<R> argumentType) {
+        return StandardConvertors.findArgumentConvertor(argumentType);
+    }
 }

@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package team.idealstate.hyper.command.spi;
+package team.idealstate.hyper.command.api.framework.annotation;
 
-import org.jetbrains.annotations.NotNull;
-import team.idealstate.hyper.command.api.Command;
-import team.idealstate.hyper.command.api.framework.CommandHandler;
+import java.lang.annotation.*;
 
 /**
- * <p>CommandFactory</p>
+ * <p>RootCommand</p>
  *
- * <p>创建于 2024/2/16 20:19</p>
+ * <p>创建于 2024/2/29 14:54</p>
  *
  * @author ketikai
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface CommandFactory {
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface RootCommand {
 
-    @NotNull
-    Command createRootCommand(String description);
-
-    @NotNull
-    Command createCommand(String description);
-
-    @NotNull
-    Command createCommand(@NotNull Class<? extends CommandHandler> commandHandlerClass);
+    String value();
 }

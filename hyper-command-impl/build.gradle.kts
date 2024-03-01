@@ -43,6 +43,11 @@ tasks.compileJava {
     finalizedBy(tasks.test)
 }
 
+tasks.compileTestJava {
+    options.encoding = charset
+    options.compilerArgs.add("-parameters")
+}
+
 tasks.processResources {
     filteringCharset = charset
     includeEmptyDirs = false
